@@ -27,6 +27,8 @@ def main():
         
         ship.draw(screen)
         # draws the player
+
+        ship.update(dt)
         
         pygame.display.flip()
         # refreshes the screen
