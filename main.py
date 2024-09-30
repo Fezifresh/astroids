@@ -10,12 +10,24 @@ def main():
     screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
     # sets the screen size
 
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    #creating groups
+
+    Player.containers = (updatable, drawable)
+    #adding all Players to the group
+
+
     ship = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
+    
 
     clock = pygame.time.Clock()
     dt = 0
     # sets up the clock for framerate and a delta variable
     
+    
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -25,10 +37,14 @@ def main():
         pygame.Surface.fill(screen, (0, 0, 51))
         # opens a dark blue screen
         
-        ship.draw(screen)
-        # draws the player
+        for element in updatable:
+            element.update(dt)
+        #updates all elements of the group updatable
 
-        ship.update(dt)
+        for element in drawable:    
+            element.draw(screen)
+        # draws all elements of the group drawable
+
         
         pygame.display.flip()
         # refreshes the screen
