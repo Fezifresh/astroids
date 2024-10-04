@@ -56,10 +56,19 @@ def main():
             element.draw(screen)
         # draws all elements of the group drawable
 
-        for element in asteroids:
-            if element.checkcollision(ship):
+        for asteroid in asteroids:
+            if asteroid.checkcollision(ship):
                 sys.exit("Game over!")
-        # Game Over bei Kollision
+        # Game Over bei Kollision Schiff-Asteroid
+
+        for shot in shots:
+            for asteroid in asteroids:
+                if shot.checkcollision(asteroid):
+                    asteroid.kill()
+                    shot.kill()
+        # Asteroiden verschwinden bei Treffer
+
+
         
         pygame.display.flip()
         # refreshes the screen
