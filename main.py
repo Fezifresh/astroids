@@ -3,6 +3,10 @@
 # throughout this file
 import pygame
 import sys
+
+import os 
+#Text anzeigen
+
 from constants import *
 from player import Player
 from asteroid import Asteroid
@@ -10,7 +14,10 @@ from asteroidfield import AsteroidField
 from shot import Shot
 
 def main():
-    pygame.init
+    pygame.init()
+    pygame.font.init()
+    # Schrift aktivieren
+
     screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
     # sets the screen size
 
@@ -31,13 +38,13 @@ def main():
 
     ship = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
-    
-
     clock = pygame.time.Clock()
     dt = 0
     # sets up the clock for framerate and a delta variable
     
-    
+    score = 0
+    font = pygame.font.Font(None, 36)
+    # sets up initial score and font
 
     while True:
         for event in pygame.event.get():
@@ -66,9 +73,11 @@ def main():
                 if shot.checkcollision(asteroid):
                     asteroid.split()
                     shot.kill()
+                    score += SCORE_INCREMENT
         # Asteroiden verschwinden bei Treffer
 
-
+        score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
         
         pygame.display.flip()
         # refreshes the screen
