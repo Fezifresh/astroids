@@ -44,7 +44,14 @@ def main():
     
     score = 0
     font = pygame.font.Font(None, 36)
+    font_big = pygame.font.Font(None, 72)
     # sets up initial score and font
+
+    player_immunity = False
+    collision_time = 0
+    # für inv Frames
+
+    player_health = PLAYER_STARTING_HEALTH
 
     while True:
         for event in pygame.event.get():
@@ -63,9 +70,19 @@ def main():
             element.draw(screen)
         # draws all elements of the group drawable
 
+        if pygame.time.get_ticks() - collision_time > 1000:
+            ship.deactivate_shield()
+
         for asteroid in asteroids:
             if asteroid.checkcollision(ship):
-                sys.exit("Game over!")
+                if player_health > 0 and ship.immunity == False:
+                    player_health -= 1
+                    ship.activate_shield()
+                    collision_time = pygame.time.get_ticks()
+                elif ship.immunity == True:
+                    pass
+                else:
+                    sys.exit("Game over!")
         # Game Over bei Kollision Schiff-Asteroid
 
         for shot in shots:
@@ -78,7 +95,14 @@ def main():
 
         score_text = font.render(f'Score: {score}', True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
+        # aktualisiert die score anzeige
+
+        health_text = font.render(f'Shields: {player_health}', True, (255, 255, 255))
+        screen.blit(health_text, (1100, 10))
         
+        if player_immunity == True:
+            PLAYER_COLOR = (255, 255, 0)
+
         pygame.display.flip()
         # refreshes the screen
         

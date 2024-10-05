@@ -9,6 +9,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        self.color = PLAYER_COLOR
+        self.immunity = False
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -32,8 +34,16 @@ class Player(CircleShape):
         new_shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         self.timer = PLAYER_SHOOT_COOLDOWN
 
+    def activate_shield(self):
+        self.color = (255, 255, 0)
+        self.immunity = True
+
+    def deactivate_shield(self):
+        self.color = PLAYER_COLOR
+        self.immunity = False
+
     def draw(self, screen):
-        pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)
+        pygame.draw.polygon(screen, self.color, self.triangle(), 2)
 
     def update(self, dt):
         self.timer -= dt
