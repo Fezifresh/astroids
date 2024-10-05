@@ -11,6 +11,8 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from powerup import Powerup
+from powerup_area import Powerup_area
 from shot import Shot
 
 def main():
@@ -25,16 +27,20 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
 
     #creating groups
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, drawable, updatable)
     AsteroidField.containers = (updatable)
+    Powerup.containers = (powerups, updatable, drawable)
+    Powerup_area.containers = (updatable)
     Shot.containers = (shots, drawable, updatable) 
     #adding classmembers to the groups
 
     asteroidfield = AsteroidField()
+    powerup_area = Powerup_area()
 
     ship = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
@@ -47,7 +53,6 @@ def main():
     font_big = pygame.font.Font(None, 72)
     # sets up initial score and font
 
-    player_immunity = False
     collision_time = 0
     # für inv Frames
 
@@ -70,15 +75,19 @@ def main():
             element.draw(screen)
         # draws all elements of the group drawable
 
-        if pygame.time.get_ticks() - collision_time > 1000:
+        if pygame.time.get_ticks() - ship.shield_activation_time > ship.shield_duration:
             ship.deactivate_shield()
+
+        for powerup in powerups:
+            if powerup.checkcollision(ship):
+                ship.activate_shield(POWER_UP_SHIELD_DURATION)
+                powerup.kill()
 
         for asteroid in asteroids:
             if asteroid.checkcollision(ship):
                 if player_health > 0 and ship.immunity == False:
                     player_health -= 1
-                    ship.activate_shield()
-                    collision_time = pygame.time.get_ticks()
+                    ship.activate_shield(1000)
                 elif ship.immunity == True:
                     pass
                 else:
@@ -100,9 +109,6 @@ def main():
         health_text = font.render(f'Shields: {player_health}', True, (255, 255, 255))
         screen.blit(health_text, (1100, 10))
         
-        if player_immunity == True:
-            PLAYER_COLOR = (255, 255, 0)
-
         pygame.display.flip()
         # refreshes the screen
         
